@@ -1,58 +1,206 @@
-﻿// See https://aka.ms/new-console-template for more information
-/// <summary>
-///  Top-level statements 
-///  Код програми (оператори)  вищого рівня
-/// </summary>
-///
-Console.WriteLine("Lab6 C# ");
-AnyFunc();
+﻿using System;
 
-/// <summary>
-/// 
-///  Top-level statements must precede namespace and type declarations.
-/// At the top-level methods/functions can be defined and used
-/// На верхньому рівні можна визначати та використовувати методи/функції
-/// </summary>
-void AnyFunc()
+public interface IDisplayable
 {
-    Console.WriteLine(" Some function in top-level");
+    void Show();
 }
-Console.WriteLine("Problems 1 ");
-AnyFunc();
-//  приклад класів
-UserClass cl = new UserClass();
-cl.Name = " UserClass top-level ";
-User.UserClass cl2 = new();
-cl2.Name = " UserClass namespace User ";
 
-
-
-
-/// <summary>
-/// 
-/// Top-level statements must precede namespace and type declarations.
-/// Оператори верхнього рівня мають передувати оголошенням простору імен і типу.
-/// Створення класу(ів) або оголошенням простору імен є закіченням  іструкцій верхнього рівня
-/// 
-/// </summary>
-
-namespace User
+public interface INameAge
 {
-    class UserClass
-    {
-        public string Name { get; set; }
-        public UserClass()
-        {
-            Name = "NoName";
-        }
-        UserClass(string n)
-        {
-            Name = n;
-        }
-    }
-
+    string Name { get; set; }
+    int Age { get; set; }
 }
-class UserClass
+
+public class Person : INameAge, IDisplayable
 {
     public string Name { get; set; }
+    public int Age { get; set; }
+
+    public Person(string name, int age)
+    {
+        Name = name;
+        Age = age;
+        Console.WriteLine("Person constructor called.");
+    }
+
+    public virtual void Show()
+    {
+        Console.WriteLine($"Name: {Name}, Age: {Age}");
+    }
+
+    ~Person()
+    {
+        Console.WriteLine("Person destructor called.");
+    }
+}
+
+public class Employee : Person
+{
+    public string Position { get; set; }
+
+    public Employee(string name, int age, string position)
+        : base(name, age)
+    {
+        Position = position;
+        Console.WriteLine("Employee constructor called.");
+    }
+
+    public override void Show()
+    {
+        base.Show();
+        Console.WriteLine($"Position: {Position}");
+    }
+
+    ~Employee()
+    {
+        Console.WriteLine("Employee destructor called.");
+    }
+}
+
+public class Worker : Employee
+{
+    public string Department { get; set; }
+
+    public Worker(string name, int age, string position, string department)
+        : base(name, age, position)
+    {
+        Department = department;
+        Console.WriteLine("Worker constructor called.");
+    }
+
+    public override void Show()
+    {
+        base.Show();
+        Console.WriteLine($"Department: {Department}");
+    }
+
+    ~Worker()
+    {
+        Console.WriteLine("Worker destructor called.");
+    }
+}
+
+public class Engineer : Employee
+{
+    public string Field { get; set; }
+
+    public Engineer(string name, int age, string position, string field)
+        : base(name, age, position)
+    {
+        Field = field;
+        Console.WriteLine("Engineer constructor called.");
+    }
+
+    public override void Show()
+    {
+        base.Show();
+        Console.WriteLine($"Field of expertise: {Field}");
+    }
+
+    ~Engineer()
+    {
+        Console.WriteLine("Engineer destructor called.");
+    }
+}
+
+public interface IFunction
+{
+    double Calculate(double x);
+}
+
+public class Line : IFunction
+{
+    public double A { get; set; }
+    public double B { get; set; }
+
+    public Line(double a, double b)
+    {
+        A = a;
+        B = b;
+    }
+
+    public double Calculate(double x)
+    {
+        return A * x + B;
+    }
+
+    public override string ToString()
+    {
+        return $"Line: y = {A}x + {B}";
+    }
+}
+
+public class Quadratic : IFunction
+{
+    public double A { get; set; }
+    public double B { get; set; }
+    public double C { get; set; }
+
+    public Quadratic(double a, double b, double c)
+    {
+        A = a;
+        B = b;
+        C = c;
+    }
+
+    public double Calculate(double x)
+    {
+        return A * x * x + B * x + C;
+    }
+
+    public override string ToString()
+    {
+        return $"Quadratic: y = {A}x^2 + {B}x + {C}";
+    }
+}
+
+public class Hyperbola : IFunction
+{
+    public double A { get; set; }
+    public double B { get; set; }
+
+    public Hyperbola(double a, double b)
+    {
+        A = a;
+        B = b;
+    }
+
+    public double Calculate(double x)
+    {
+        return A / x + B;
+    }
+
+    public override string ToString()
+    {
+        return $"Hyperbola: y = {A}/x + {B}";
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Person p = new Person("John", 30);
+        Worker w = new Worker("Alice", 28, "Manager", "Sales");
+        Engineer e = new Engineer("Bob", 35, "Senior Engineer", "Electronics");
+
+        p.Show();
+        w.Show();
+        e.Show();
+        
+        IFunction[] functions = new IFunction[]
+        {
+            new Line(1, 2),
+            new Quadratic(1, -2, 1),
+            new Hyperbola(4, -1)
+        };
+
+        Console.WriteLine("Enter the value of x:");
+        double x = Convert.ToDouble(Console.ReadLine());
+
+        foreach (var func in functions)
+        {
+            Console.WriteLine($"{func} at x = {x}: {func.Calculate(x)}");
+        }
+    }
 }
